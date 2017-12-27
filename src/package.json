@@ -1,0 +1,10 @@
+{
+  "name": "sreality-puppeteer-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/TomasHubelbauer/sreality-puppeteer-scraper.git",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^0.13.0"
+  }
+}
