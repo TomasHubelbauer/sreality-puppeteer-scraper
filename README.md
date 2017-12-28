@@ -7,6 +7,7 @@ Scrapes SReality.cs using Puppeteer and reports new and updated posts for a give
 ```sh
 cd src
 nvm use
+yarn
 node --experimental-modules index.mjs # Or `nodemon` for file change watching
 ```
 

@@ -7,6 +7,8 @@ async function scrape() {
   const page = await browser.newPage();
   await page.bringToFront();
 
+  // TODO: Switch by process.argv[2] - either -f or -h (flats or houses)
+
   // Scrape flats
   try {
     // Go to flat search page
@@ -24,18 +26,16 @@ async function scrape() {
     // Click the search button
     (await page.$('button[type=submit]')).click();
 
+    await page.waitForNavigation();
+
     // Iterate the posts
     for (const propertyDiv of (await page.$$('.property'))) {
       // TODO: Open post detail to have all data
-      const nameSpan = await propertyDiv.$('.name');
-      console.log('nameSpan', nameSpan);
-      const name = await nameSpan.$('*');
-      console.log('name', name);
+      // TODO: In post detail, use $.evaluate to access textContent on all items
+      // TODO: Wrap in do-while and control the while loop by existence of Next button
     }
 
-    // TODO: Click next page and jump back or continue
-
-    // TODO: Update post database (SQLite? Git?)
+    // TODO: Write out posts to JSON
   } catch (e) {
     console.log(e);
   }
