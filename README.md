@@ -15,8 +15,8 @@ Combine with `cron` to execute periodically and e.g. send email reports…
 
 ## Studying
 
-See [doc/notes.md](doc/notes.md).
+See [development log](doc/notes.md).
 
 ## Contributing
 
-See [doc/tasks.md](doc/tasks.md).
+See [suggested contributions](doc/tasks.md).
