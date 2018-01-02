@@ -4,6 +4,10 @@
   "main": "index.js",
   "repository": "https://github.com/TomasHubelbauer/sreality-puppeteer-scraper.git",
   "license": "MIT",
+  "scripts": {
+    "flat": "node --experimental-modules index.mjs flat",
+    "house": "node --experimental-modules index.mjs house"
+  },
   "dependencies": {
     "puppeteer": "^0.13.0"
   }
