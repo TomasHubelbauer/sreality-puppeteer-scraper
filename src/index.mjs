@@ -1,53 +1,32 @@
 import puppeteer from 'puppeteer'; // https://github.com/GoogleChrome/puppeteer
+import commander from 'commander'; // https://github.com/tj/commander.js
 import fs from 'fs';
 import util from 'util';
 import url from 'url';
 
 fs.writeFileAsync = util.promisify(fs.writeFile);
 
-async function scrape() {
-  const headless = false;
-  const browser = await puppeteer.launch({ headless, slowMo: 50, args: [ '--auto-open-devtools-for-tabs', '--start-maximized' ] });
+const headless = false;
+
+commander
+  .command('flat [place]')
+  .alias('f')
+  .description('Searches for flats')
+  .option('--pf, --price-from [amount]', 'Price from')
+  .option('--pt, --price-to [amount]', 'Price to')
+  .option('--sf, --story-from [story]', 'Story from')
+  .option('--st, --story-to [story]', 'Story to')
+  .option('--af, --area-from [floor]', 'Floor area from')
+  .option('--at, --area-to [floor]', 'Floor area to')
+  .action(scrapeFlats);
+
+// TODO: Read from `package.json`
+commander.version('1.0.0').parse(process.argv);
+
+async function scrapeFlats(place, { priceFrom, priceTo, storyFrom, storyTo, areaFrom, areaTo }) {
+  const browser = await puppeteer.launch({ headless, slowMo: 20, args: [ '--auto-open-devtools-for-tabs', '--start-maximized' ] });
   const page = (await browser.pages())[0];
   await page.setViewport({ width: 1280, height: 1024 });
-
-  try {
-    switch (process.argv[2]) {
-      case 'flat': {
-        // TODO: Read search values from command line arguments
-        const place = 'Praha';
-        const details = {
-          priceFrom: '3000000',
-          priceTo: '6000000',
-          storyFrom: '2',
-          storyTo: null,
-          areaFrom: '60',
-          areaTo: null,
-        };
-        await scrapeFlats(headless, browser, page, place, details);
-        break;
-      }
-      case 'house': {
-        // TODO: Read search values from command line arguments
-        const place = 'Praha';
-        const details = {
-
-        };
-        await scrapeHouses(headless, browser, page, place, details);
-        break;
-      }
-      default: {
-        console.error(`Unknown search type ${process.argv[2]}.`);
-      }
-    }
-  } catch (error) {
-    console.log(error);
-    await browser.close();
-  }
-}
-
-async function scrapeFlats(headless, browser, page, place, details) {
-  await abort3rdPartyRequests(page);
   await page.goto('https://sreality.cz/hledani/byty');
 
   const placeInput = await page.$(`input[placeholder='město, městská část, ulice']`);
@@ -62,40 +41,40 @@ async function scrapeFlats(headless, browser, page, place, details) {
   const fromInputs = await page.$$(`input[placeholder='od:']`);
   const toInputs = await page.$$(`input[placeholder='do:']`);
 
-  if (details.priceFrom) {
+  if (priceFrom) {
     const priceFromInput = fromInputs[0];
     await priceFromInput.focus();
-    await page.keyboard.type(details.priceFrom);
+    await page.keyboard.type(priceFrom);
   }
 
-  if (details.priceTo) {
+  if (priceTo) {
     const priceToInput = toInputs[0];
     await priceToInput.focus();
-    await page.keyboard.type(details.priceTo);
+    await page.keyboard.type(priceTo);
   }
 
-  if (details.storyFrom) {
+  if (storyFrom) {
     const storyFromInput = fromInputs[1];
     await storyFromInput.focus();
-    await page.keyboard.type(details.storyFrom);
+    await page.keyboard.type(storyFrom);
   }
 
-  if (details.storyTo) {
+  if (storyTo) {
     const storyToInput = toInputs[1];
     await storyToInput.focus();
-    await page.keyboard.type(details.storyTo);
+    await page.keyboard.type(storyTo);
   }
 
-  if (details.areaFrom) {
+  if (areaFrom) {
     const areaFromInput = fromInputs[2];
     await areaFromInput.focus();
-    await page.keyboard.type(details.areaFrom);
+    await page.keyboard.type(areaFrom);
   }
 
-  if (details.areaTo) {
+  if (areaTo) {
     const areaToInput = toInputs[2];
     await areaToInput.focus();
-    await page.keyboard.type(details.areaTo);
+    await page.keyboard.type(areaTo);
   }
 
   await (await page.$('button[type=submit]')).click();
@@ -140,32 +119,10 @@ async function scrapeFlats(headless, browser, page, place, details) {
   await browser.close();
 }
 
-async function scrapeHouses(headless, browser, page) {
+async function scrapeHouses(place, {}) {
+  const browser = await puppeteer.launch({ headless: false, slowMo: 20, args: [ '--auto-open-devtools-for-tabs', '--start-maximized' ] });
+  const page = (await browser.pages())[0];
+  await page.setViewport({ width: 1280, height: 1024 });
+  await page.goto('https://sreality.cz/hledani/domy');
   // TODO.
 }
-
-const allowedHosts = [
-  'sreality.cz',
-  'www.sreality.cz',
-  'api.mapy.cz',
-  'mapserver.mapy.cz',
-  'login.szn.cz',
-  'h.imedia.cz' // Required to prevent postMessage origin error
-];
-
-// Speed up browsing by disabling 3rd party scripts.
-async function abort3rdPartyRequests(page) {
-  return;
-  await page.setRequestInterception(true);
-  page.on('request', (request) => {
-    console.log('Inspecting:', request.url);
-    const host = url.parse(request.url).host;
-    if (!allowedHosts.includes(host)) {
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
-}
-
-scrape();

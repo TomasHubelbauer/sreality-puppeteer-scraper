@@ -7,10 +7,10 @@ Scrapes SReality.cs using Puppeteer and reports new and updated posts for a give
 ```sh
 cd src
 nvm use
-yarn flat …
-yarn house …
+yarn flat help
+yarn house help
 # Or `nodemon` for file change watching
-node --experimental-modules index.mjs …
+node --experimental-modules index.mjs help
 ```
 
 Combine with `cron` to execute periodically and e.g. send email reports…

@@ -6,9 +6,11 @@
   "license": "MIT",
   "scripts": {
     "flat": "node --experimental-modules index.mjs flat",
+    "flat:demo": "yarn flat Praha --pf 3000000 --pt 6000000 --sf 2 --af 60",
     "house": "node --experimental-modules index.mjs house"
   },
   "dependencies": {
+    "commander": "^2.12.2",
     "puppeteer": "^0.13.0"
   }
 }
