@@ -13,6 +13,8 @@ yarn house help
 node --experimental-modules index.mjs help
 ```
 
+Use `yarn flat:demo` or `yarn house:demo` for prefilled search criteria showcase.
+
 Combine with `cron` to execute periodically and e.g. send email reports…
 
 ## Contributing
