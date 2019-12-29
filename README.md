@@ -2,6 +2,8 @@
 
 Scrapes SReality.cs using Puppeteer and reports new and updated posts for a given search.
 
+Check out https://github.com/TomasHubelbauer/sreality as well.
+
 ## Running
 
 ```sh
